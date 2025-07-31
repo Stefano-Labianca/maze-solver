@@ -1,20 +1,19 @@
-from graphics import  Cell, Window
+from graphics import  Cell, Maze, Window
 
+
+ROWS = 20
+COLUMNS = 30
+CELL_SIZE_X = 20
+CELL_SIZE_Y = 20
 
 def main():
     win = Window(800, 600)
-
-    c1 = Cell(win)
-    c2 = Cell(win)
-    c3 = Cell(win)
-
-    c1.draw(100, 200, 150, 250)
-    c2.draw(150, 200, 200, 250)
-    c3.draw(400, 500, 450, 550)
-
-    c1.draw_move(c2)
-    c2.draw_move(c3, True)
+    maze = Maze(4, 4,
+        ROWS, COLUMNS, CELL_SIZE_X, CELL_SIZE_Y , win
+    )
     
+
+
     win.wait_for_close()
 
 if __name__ == "__main__":
