@@ -6,6 +6,7 @@ class Point:
         self.x = x
         self.y = y
 
+
 class Line:
     def __init__(self, p1: Point, p2: Point):
         self.__p1 = p1
@@ -47,3 +48,42 @@ class Window:
         line.draw(self.__canvas, fill_color)
 
 
+class Cell: 
+    def __init__(self, window: Window):
+            self.has_left_wall: bool = True
+            self.has_right_wall: bool = True
+            self.has_top_wall: bool = True
+            self.has_bottom_wall: bool = True
+
+            self.__x1: float = -1
+            self.__y1: float = -1
+            self.__x2: float = -1
+            self.__y2: float = -1
+
+            self.__win = window
+
+    def draw(self, x1: float, y1: float, x2: float, y2: float):
+        self.__x1 = x1
+        self.__y1 = y1
+        self.__x2 = x2
+        self.__y2 = y2
+
+        p1 = Point(self.__x1, self.__y1)
+        p2 = Point(self.__x2, self.__y2)
+        
+        if self.has_left_wall:
+            left_line = Line(p1, Point(p1.x, p2.y))
+            self.__win.draw_line(left_line, 'black')
+
+        if self.has_top_wall:
+            top_line = Line(p1, Point(p2.x, p1.y))
+            self.__win.draw_line(top_line, 'black')
+
+        if self.has_right_wall:
+            right_line = Line(Point(p2.x, p1.y), p2)
+            self.__win.draw_line(right_line, 'black')
+
+        if self.has_bottom_wall:
+            bottom_line = Line(Point(p1.x, p2.y), p2)
+            self.__win.draw_line(bottom_line, 'black')
+    
