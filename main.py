@@ -8,10 +8,13 @@ def main():
     c2 = Cell(win)
     c3 = Cell(win)
 
-    c1.draw(50, 50, 150, 150)
-    c2.draw(150, 50, 250, 150)
-    c2.draw(250, 50, 350, 150)
+    c1.draw(100, 200, 150, 250)
+    c2.draw(150, 200, 200, 250)
+    c3.draw(400, 500, 450, 550)
 
+    c1.draw_move(c2)
+    c2.draw_move(c3, True)
+    
     win.wait_for_close()
 
 if __name__ == "__main__":
