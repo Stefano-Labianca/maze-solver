@@ -37,7 +37,17 @@ class Tests(unittest.TestCase):
 
         self.assertRaises(ValueError, lambda: Maze(0, 0, num_rows, num_cols, -10, 0))
 
+    def test_create_entrance_and_exit(self):
+        num_cols = 12
+        num_rows = 10
+        m1 = Maze(0, 0, num_rows, num_cols, 10, 10)
+        cells = m1.get_cells()
 
+        entrance_cell = cells[0][0]
+        exit_cell = cells[num_cols - 1][num_rows - 1]
+
+        self.assertEqual(entrance_cell.has_top_wall, False)
+        self.assertEqual(exit_cell.has_bottom_wall, False)
 
 if __name__ == "__main__":
     unittest.main()
