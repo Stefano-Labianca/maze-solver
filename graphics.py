@@ -53,7 +53,7 @@ class Window:
 
 
 class Cell: 
-    def __init__(self, window: Window):
+    def __init__(self, window: Window | None = None):
             self.has_left_wall: bool = True
             self.has_right_wall: bool = True
             self.has_top_wall: bool = True
@@ -75,19 +75,19 @@ class Cell:
         p1 = Point(self.__x1, self.__y1)
         p2 = Point(self.__x2, self.__y2)
         
-        if self.has_left_wall:
+        if self.has_left_wall and self.__win:
             left_line = Line(p1, Point(p1.x, p2.y))
             self.__win.draw_line(left_line)
 
-        if self.has_top_wall:
+        if self.has_top_wall and self.__win:
             top_line = Line(p1, Point(p2.x, p1.y))
             self.__win.draw_line(top_line)
 
-        if self.has_right_wall:
+        if self.has_right_wall and self.__win:
             right_line = Line(Point(p2.x, p1.y), p2)
             self.__win.draw_line(right_line)
 
-        if self.has_bottom_wall:
+        if self.has_bottom_wall and self.__win:
             bottom_line = Line(Point(p1.x, p2.y), p2)
             self.__win.draw_line(bottom_line)
 
@@ -121,6 +121,9 @@ class Cell:
         if undo:
             line_color = "red"
         
+        if not self.__win: 
+            return
+        
         path = Line(current_cell_center, to_cell_center)
         self.__win.draw_line(path, line_color)
 
@@ -130,8 +133,18 @@ class Cell:
 
 class Maze:
     def __init__(self, x1: int, y1: int, num_rows: int, num_cols: int,
-        cell_size_x: int, cell_size_y: int, win: Window,
+        cell_size_x: int, cell_size_y: int, win: Window | None = None,
     ):
+        
+        if num_cols <= 0:
+            raise ValueError(f"Invalid amount of columns: {num_cols}")
+        
+        if num_rows <= 0:
+            raise ValueError(f"Invalid amount of rows: {num_rows}")
+        
+        if cell_size_x <= 0 or cell_size_y <= 0:
+            raise ValueError(f"Invalid cell size. x={cell_size_x}, y={cell_size_y}")
+
         self.__x1 = x1
         self.__y1 = y1
         self.__num_rows = num_rows
@@ -142,6 +155,8 @@ class Maze:
 
         self.__cells: list[list[Cell]] = []
         self.__create_cells()
+
+    def get_cells(self) -> list[list[Cell]]: return self.__cells
 
     def __create_cells(self):
         for _ in range(self.__num_cols):
@@ -170,5 +185,8 @@ class Maze:
         self.__animate()
     
     def __animate(self):
+        if not self.__win:
+            return
+
         self.__win.redraw()
         sleep(0.01)

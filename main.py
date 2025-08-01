@@ -1,8 +1,8 @@
 from graphics import  Maze, Window
 
 
-ROWS = 20
-COLUMNS = 30
+ROWS = 10
+COLUMNS = 10
 CELL_SIZE_X = 20
 CELL_SIZE_Y = 20
 MAZE_X = 4
