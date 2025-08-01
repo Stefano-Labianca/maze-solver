@@ -1,4 +1,5 @@
-from graphics import  Maze, Window
+from graphics import Window
+from maze import Maze
 
 
 ROWS = 15
