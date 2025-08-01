@@ -8,3 +8,4 @@ dependencies = [
     "pyright>=1.1.403",
 ]
 [tool.pyright]
+reportPrivateUsage = true

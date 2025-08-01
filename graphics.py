@@ -156,6 +156,8 @@ class Maze:
         self.__cells: list[list[Cell]] = []
         self.__create_cells()
 
+    
+
     def get_cells(self) -> list[list[Cell]]: return self.__cells
 
     def __create_cells(self):
