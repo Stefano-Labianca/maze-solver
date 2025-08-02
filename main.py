@@ -22,7 +22,7 @@ def main():
     cell_size_x = floor((SCREEN_WIDTH - 2 * MAZE_MARGIN_X) / COLUMNS)
     cell_size_y = floor((SCREEN_HEIGHT - 2 * MAZE_MARGIN_Y) / ROWS)
 
-    maze = Maze(MAZE_MARGIN_X, MAZE_MARGIN_Y, ROWS, COLUMNS, cell_size_x, cell_size_y , win, SEED, ANIMATION_SPEED)
+    maze = Maze(MAZE_MARGIN_X, MAZE_MARGIN_Y, ROWS, COLUMNS, cell_size_x, cell_size_y , win, animation_speed=ANIMATION_SPEED)
     
     print(f"Solved? {maze.solve()}")
 
