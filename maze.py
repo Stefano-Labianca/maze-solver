@@ -99,7 +99,7 @@ class Cell:
 class Maze:
     def __init__(self, x1: int, y1: int, num_rows: int, num_cols: int,
         cell_size_x: int, cell_size_y: int, win: Window | None = None,
-        seed: SeedType = None
+        seed: SeedType = None, animation_speed: float = 0.05
     ):
         
         if num_cols <= 0:
@@ -118,6 +118,7 @@ class Maze:
         self.__cell_size_x = cell_size_x
         self.__cell_size_y = cell_size_y
         self.__win = win
+        self.animation_speed = animation_speed
 
         self.__cells: list[list[Cell]] = []
         self.__create_cells()
@@ -126,6 +127,11 @@ class Maze:
         random.seed(seed)
         self.__break_walls_r(0, 0)
         self.__reset_cells_visited()
+
+    def solve(self):
+        return self.__solve_r()
+
+    def get_cells(self) -> list[list[Cell]]: return self.__cells
 
     def __break_entrance_and_exit(self):
         self.__cells[0][0].has_top_wall = False
@@ -137,7 +143,6 @@ class Maze:
         self.__cells[exit_col][exit_row].has_bottom_wall = False
         self.__draw_cell(exit_col, exit_row)
 
-    def get_cells(self) -> list[list[Cell]]: return self.__cells
 
     def __create_cells(self):
         for _ in range(self.__num_cols):
@@ -169,7 +174,7 @@ class Maze:
             return
 
         self.__win.redraw()
-        time.sleep(0.01)
+        time.sleep(self.animation_speed)
 
     # Use random walk
     def __break_walls_r(self, i: int, j: int):
@@ -215,3 +220,68 @@ class Maze:
         for col_idx in range(self.__num_cols):
             for row_idx in range(self.__num_rows):
                 self.__cells[col_idx][row_idx].visited = False
+
+    def __solve_r(self, i: int = 0, j: int = 0):
+        self.__animate()
+        current_cell = self.__cells[i][j]
+        current_cell.visited = True
+
+        exit_col = self.__num_cols - 1
+        exit_row = self.__num_rows - 1
+
+        if i == exit_col and j == exit_row:
+            return True
+        
+        if i + 1 < self.__num_cols: # right
+            right_cell = self.__cells[i + 1][j]
+            is_free_path = (not current_cell.has_right_wall) and (not right_cell.has_left_wall)
+            
+            if is_free_path and (not right_cell.visited):
+                current_cell.draw_move(right_cell)
+
+                if self.__solve_r(i + 1, j):
+                    return True
+
+                current_cell.draw_move(right_cell, True)
+
+        
+        if i - 1 >= 0: # left
+            left_cell = self.__cells[i - 1][j]
+            is_free_path = (not current_cell.has_left_wall) and (not left_cell.has_right_wall)
+
+            if is_free_path and (not left_cell.visited):
+                current_cell.draw_move(left_cell)
+
+                if self.__solve_r(i - 1, j):
+                    return True
+
+                current_cell.draw_move(left_cell, True)
+
+        
+        if j + 1 < self.__num_rows: # bottom
+            bottom_cell = self.__cells[i][j + 1]
+            is_free_path = (not current_cell.has_bottom_wall) and (not bottom_cell.has_top_wall)
+
+            if is_free_path and (not bottom_cell.visited):
+                current_cell.draw_move(bottom_cell)
+
+                if self.__solve_r(i, j + 1):
+                    return True
+
+                current_cell.draw_move(bottom_cell, True)
+
+
+        if j - 1 >= 0: # top
+            top_cell = self.__cells[i][j - 1]
+            is_free_path = (not current_cell.has_top_wall) and (not top_cell.has_bottom_wall)
+
+            if is_free_path and (not top_cell.visited):
+                current_cell.draw_move(top_cell)
+
+                if self.__solve_r(i, j - 1):
+                    return True
+
+                current_cell.draw_move(top_cell, True)
+
+
+        return False
