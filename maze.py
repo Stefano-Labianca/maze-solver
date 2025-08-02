@@ -125,6 +125,7 @@ class Maze:
 
         random.seed(seed)
         self.__break_walls_r(0, 0)
+        self.__reset_cells_visited()
 
     def __break_entrance_and_exit(self):
         self.__cells[0][0].has_top_wall = False
@@ -210,3 +211,7 @@ class Maze:
                 
                 self.__break_walls_r(random_choice[0], random_choice[1])
                 
+    def __reset_cells_visited(self):
+        for col_idx in range(self.__num_cols):
+            for row_idx in range(self.__num_rows):
+                self.__cells[col_idx][row_idx].visited = False
