@@ -1,5 +1,8 @@
 from graphics import Line, LineColorType, Point, Window
 import time
+import random
+
+SeedType = int | float | str | bytes | bytearray | None
 
 class Cell: 
     def __init__(self, window: Window | None = None):
@@ -14,6 +17,7 @@ class Cell:
             self.__y2: int = -1
 
             self.__win = window
+            self.visited = False
 
     def draw(self, x1: int, y1: int, x2: int, y2: int):
         if not self.__win:
@@ -95,6 +99,7 @@ class Cell:
 class Maze:
     def __init__(self, x1: int, y1: int, num_rows: int, num_cols: int,
         cell_size_x: int, cell_size_y: int, win: Window | None = None,
+        seed: SeedType = None
     ):
         
         if num_cols <= 0:
@@ -118,6 +123,9 @@ class Maze:
         self.__create_cells()
         self.__break_entrance_and_exit()
 
+        random.seed(seed)
+        self.__break_walls_r(0, 0)
+
     def __break_entrance_and_exit(self):
         self.__cells[0][0].has_top_wall = False
         self.__draw_cell(0, 0)
@@ -138,7 +146,6 @@ class Maze:
         for col_idx in range(self.__num_cols):
             for row_idx in range(self.__num_rows):
                 self.__draw_cell(col_idx, row_idx)    
-
 
     def __draw_cell(self, col: int, row: int):
         cell_obj = self.__cells[col][row]
@@ -162,3 +169,44 @@ class Maze:
 
         self.__win.redraw()
         time.sleep(0.01)
+
+    # Use random walk
+    def __break_walls_r(self, i: int, j: int):
+        self.__cells[i][j].visited = True
+
+        while True:
+            to_visit: list[tuple[int, int]] = []
+
+            if i + 1 < self.__num_cols and (not self.__cells[i + 1][j].visited): # right
+                to_visit.append((i + 1, j)) 
+            
+            if i - 1 >= 0 and (not self.__cells[i - 1][j].visited): # left
+                to_visit.append((i - 1, j))
+            
+            if j + 1 < self.__num_rows and (not self.__cells[i][j + 1].visited): # bottom
+                to_visit.append((i, j + 1))
+
+            if j - 1 >= 0 and (not self.__cells[i][j - 1].visited): # top
+                to_visit.append((i, j - 1))
+
+            if len(to_visit) == 0:
+                self.__draw_cell(i, j)
+                return
+            else:
+                random_choice = random.choice(to_visit)
+
+                if i + 1 == random_choice[0]:
+                    self.__cells[i][j].has_right_wall = False
+                    self.__cells[random_choice[0]][random_choice[1]].has_left_wall = False
+                if i - 1 == random_choice[0]:
+                    self.__cells[i][j].has_left_wall = False
+                    self.__cells[random_choice[0]][random_choice[1]].has_right_wall = False
+                if j + 1 == random_choice[1]:
+                    self.__cells[i][j].has_bottom_wall = False
+                    self.__cells[random_choice[0]][random_choice[1]].has_top_wall = False
+                if j - 1 == random_choice[1]:
+                    self.__cells[i][j].has_top_wall = False
+                    self.__cells[random_choice[0]][random_choice[1]].has_bottom_wall = False
+                
+                self.__break_walls_r(random_choice[0], random_choice[1])
+                

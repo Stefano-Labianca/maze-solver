@@ -3,6 +3,7 @@ from typing import Literal
 
 LineColorType = Literal["red", "black", "gray", "white"]
 
+
 class Point:
     def __init__(self, x: int, y: int):
         self.x = x
